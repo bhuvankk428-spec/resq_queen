@@ -1,0 +1,1 @@
+import story from '../data/story'; export default function StoryIntro({step,next}){const s=story[step]; const final=step===story.length-1; return <main className="story"><img src={s[2]}/><section className="dialogue"><p className="eyebrow">{s[0]}</p><h2>“{s[1]}”</h2><button onClick={next}>{final?'Begin quest':'Continue'} →</button></section></main>}

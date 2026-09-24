@@ -1,0 +1,1 @@
+export default function GameArena({score,won}) { const progress=Math.min(score,7)/7*72; return <div className={'arena '+(won?'rescued':'')}><img className="king" style={{left:`${5+progress}%`}} src="/King.webp"/><div className="castle"><img src={won?'/happy_queen_after_meeting_king.png':'/enemy_queen_captured.png'}/></div><div className="ground"/></div> }

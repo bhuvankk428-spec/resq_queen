@@ -1,0 +1,1 @@
+export default function LoadingState(){return <section className="state"><img className="waiting" src="/King.webp"/><h2>The enemy is forging your challenge…</h2><p>This can take a few moments. Your King waits patiently.</p><span className="spinner"/></section>}
