@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+
 # Save the Queen — AI Knowledge Quest
 
 A responsive React quiz game where a King must answer ten AI-generated questions to rescue the Queen. It is deliberately a game interface, not a chatbot.
@@ -32,6 +33,10 @@ React UI ← validated JSON ← Express
 ## Supabase leaderboard
 
 Run [`supabase/schema.sql`](supabase/schema.sql) in the Supabase SQL Editor, then add `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` to the root `.env`. The service-role key is used only by Express and must never be exposed as a `VITE_` environment variable. Completed games upsert the player's name, wins, and losses; the home screen links to a leaderboard sorted by wins descending, then losses ascending.
+
+## Google-only authentication
+
+Set `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY` in the root `.env`, then restart Vite. In Supabase, enable **Google** under Authentication → Providers and add your local and deployed URLs to Authentication → URL Configuration → Redirect URLs (for example `http://localhost:5173`). Google OAuth client credentials are configured in Supabase, not in this repository. No email/password UI is implemented.
 
 ## API contract
 
@@ -69,5 +74,7 @@ Optional sound effects, keyboard shortcuts, a reviewed Supabase leaderboard, que
 
 Estimated implementation time: 5–7 hours. AI tools were used for brainstorming, implementation assistance, debugging, and documentation. Generated code was reviewed and tested as part of the project.
 =======
+
 # resq_queen
->>>>>>> 7faed0adf594f1d202ea3e4d0993fca9a56f6312
+
+> > > > > > > 7faed0adf594f1d202ea3e4d0993fca9a56f6312

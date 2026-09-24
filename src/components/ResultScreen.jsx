@@ -1,1 +1,31 @@
-import GameArena from './GameArena'; export default function ResultScreen({won,score,lives,again,home}){return <main className="screen result"><GameArena score={score} won={won}/><p className="eyebrow">{won?'THE CASTLE GATES OPEN':'THE PRISON STAYS CLOSED'}</p><h1>{won?'QUEEN RESCUED!':'QUEST FAILED'}</h1><p>{won?'The kingdom celebrates your knowledge.':'Regroup, study, and challenge the enemy again.'}</p><div className="result-stats"><span>Score <b>{score}/10</b></span><span>Lives <b>{lives}/3</b></span></div><div className="actions"><button onClick={again}>Play again</button><button className="ghost" onClick={home}>Return home</button></div></main>}
+import GameArena from "./GameArena";
+export default function ResultScreen({ won, score, lives, again, home }) {
+  return (
+    <main className="screen result">
+      <GameArena score={score} won={won} />
+      <p className="eyebrow">
+        {won ? "THE CASTLE GATES OPEN" : "THE PRISON STAYS CLOSED"}
+      </p>
+      <h1>{won ? "QUEEN RESCUED!" : "QUEST FAILED"}</h1>
+      <p>
+        {won
+          ? "The kingdom celebrates your knowledge."
+          : "Regroup, study, and challenge the enemy again."}
+      </p>
+      <div className="result-stats">
+        <span>
+          Score <b>{score}/10</b>
+        </span>
+        <span>
+          Lives <b>{lives}/3</b>
+        </span>
+      </div>
+      <div className="actions">
+        <button onClick={again}>Play again</button>
+        <button className="ghost" onClick={home}>
+          Return home
+        </button>
+      </div>
+    </main>
+  );
+}
