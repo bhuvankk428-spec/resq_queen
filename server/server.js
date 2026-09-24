@@ -14,11 +14,19 @@ app.use("/api/generate", generate);
 app.use("/api/leaderboard", leaderboard);
 
 app.use((err, req, res, next) => {
-  console.error(err);
+  console.error("Express error:", err);
 
-  res.status(400).json({
-    error: "Invalid JSON request.",
+  res.status(500).json({
+    error: err.message || "Internal server error",
   });
 });
+
+if (!process.env.VERCEL) {
+  const PORT = process.env.PORT || 3001;
+
+  app.listen(PORT, () => {
+    console.log(`Quest server ready on http://localhost:${PORT}`);
+  });
+}
 
 export default app;
