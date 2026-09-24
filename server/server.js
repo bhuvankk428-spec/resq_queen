@@ -4,6 +4,7 @@ import cors from "cors";
 
 import generate from "./routes/generate.js";
 import leaderboard from "./routes/leaderboard.js";
+import learn from "./routes/learn.js";
 
 const app = express();
 
@@ -12,6 +13,7 @@ app.use(express.json({ limit: "20kb" }));
 
 app.use("/api/generate", generate);
 app.use("/api/leaderboard", leaderboard);
+app.use("/api/learn", learn);
 
 app.use((err, req, res, next) => {
   console.error("Server error:", err);

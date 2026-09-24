@@ -1,4 +1,5 @@
 const letters = ["A", "B", "C", "D"];
+
 export default function QuestionCard({
   question,
   index,
@@ -10,19 +11,37 @@ export default function QuestionCard({
 }) {
   return (
     <section className="card question-card">
+
       <div className="stats">
-        <span>Question {index + 1} / 10</span>
-        <span>⚔ Score {score}</span>
-        <span>♥ {lives} lives</span>
+        <span>
+          Question {index + 1} / 10
+        </span>
+
+        <span>
+          ⚔ Score {score}
+        </span>
+
+        <span>
+          ♥ {lives} lives
+        </span>
       </div>
+
       <h2>{question.question}</h2>
+
       <div className="answers">
         {question.options.map((o, i) => {
           let c = "";
-          if (answered && i === question.correctAnswer) c = "correct";
-          else if (answered && i === selected) c = "wrong";
+
+          if (answered && i === question.correctAnswer) {
+            c = "correct";
+          } 
+          else if (answered && i === selected) {
+            c = "wrong";
+          }
+
           return (
             <button
+              key={i}
               disabled={answered}
               className={c}
               onClick={() => onAnswer(i)}
@@ -33,6 +52,7 @@ export default function QuestionCard({
           );
         })}
       </div>
+
       {answered && (
         <p
           className={
@@ -43,9 +63,11 @@ export default function QuestionCard({
         >
           {selected === question.correctAnswer
             ? "Correct! The King advances."
-            : `Not quite — the enemy stole a life.correct answer:=>${question.correctAnswer}`}
+            : `Not quite — the enemy stole a life. Correct answer: ${question.options[question.correctAnswer]}`
+          }
         </p>
       )}
+
     </section>
   );
 }
