@@ -43,7 +43,7 @@ export default function QuestionCard({
         >
           {selected === question.correctAnswer
             ? "Correct! The King advances."
-            : "Not quite — the enemy steals a life."}
+            : `Not quite — the enemy stole a life.correct answer:=>${question.correctAnswer}`}
         </p>
       )}
     </section>
