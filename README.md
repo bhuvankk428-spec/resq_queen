@@ -29,6 +29,10 @@ React UI ← validated JSON ← Express
 
 `OPENAI_MODEL` is optional and defaults to `gpt-4o-mini`. The `.env` file is ignored by Git.
 
+## Supabase leaderboard
+
+Run [`supabase/schema.sql`](supabase/schema.sql) in the Supabase SQL Editor, then add `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` to the root `.env`. The service-role key is used only by Express and must never be exposed as a `VITE_` environment variable. Completed games upsert the player's name, wins, and losses; the home screen links to a leaderboard sorted by wins descending, then losses ascending.
+
 ## API contract
 
 `POST /api/generate` accepts `{ "topic": "JavaScript Promises", "difficulty": "Mixed" }` and returns `{ topic, difficulty, questions }`. Each of the ten questions has `id`, `question`, four `options`, and `correctAnswer` (0–3). Both backend and `src/lib/validateResult.js` reject malformed JSON, missing fields, wrong counts, invalid options, and answer indexes.
@@ -55,7 +59,7 @@ The arena and answers adapt to one column on small screens with no horizontal sc
 
 ## Scope and limitations
 
-No authentication, database, or leaderboard is included. The assignment brief contains conflicting requests for a Supabase leaderboard and an explicit scope rule not to add one; this implementation follows the explicit scope rule and uses local persistence. Questions require a valid OpenAI key and network connection. The default model may require access on the configured OpenAI account.
+No authentication is included. Questions require a valid OpenAI key and network connection. The leaderboard requires an initialized Supabase table and service-role credentials. The default model may require access on the configured OpenAI account.
 
 ## Future improvements
 
