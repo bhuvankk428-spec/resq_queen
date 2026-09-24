@@ -14,7 +14,7 @@ app.use("/api/generate", generate);
 app.use("/api/leaderboard", leaderboard);
 
 app.use((err, req, res, next) => {
-  console.error("Express error:", err);
+  console.error("Server error:", err);
 
   res.status(500).json({
     error: err.message || "Internal server error",
