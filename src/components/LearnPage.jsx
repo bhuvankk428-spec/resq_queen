@@ -28,7 +28,7 @@ export default function LearnPage({
 
     try {
       const response = await fetch(
-        "http://localhost:3001/api/learn",
+  "https://resq-queen-api.vercel.app/api/learn",
         {
           method: "POST",
           headers: {
@@ -112,9 +112,7 @@ export default function LearnPage({
         }}
       >
 
-        {/* =================================================
-            TOP NAVIGATION
-        ================================================= */}
+        {}
 
         <div
           style={{
@@ -157,9 +155,7 @@ export default function LearnPage({
         </div>
 
 
-        {/* =================================================
-            HERO
-        ================================================= */}
+        {}
 
         <section
           style={{
@@ -206,6 +202,7 @@ export default function LearnPage({
     loop
     muted
     playsInline
+  preload="metadata"
     style={{
       width: "100%",
       height: "100%",
@@ -258,7 +255,7 @@ export default function LearnPage({
           </p>
 
 
-          {/* TOPIC INPUT */}
+          {}
 
           <div
             style={{
@@ -358,9 +355,7 @@ export default function LearnPage({
         </section>
 
 
-        {/* =================================================
-            LOADING
-        ================================================= */}
+        {}
 
         {loading && (
           <section
@@ -413,9 +408,7 @@ export default function LearnPage({
         )}
 
 
-        {/* =================================================
-            GENERATED CONTENT
-        ================================================= */}
+        {}
 
         {learning && !loading && (
           <section
@@ -426,9 +419,7 @@ export default function LearnPage({
             }}
           >
 
-            {/* =================================================
-                SUMMARY
-            ================================================= */}
+            {}
 
             <article
               style={{
@@ -468,9 +459,7 @@ export default function LearnPage({
             </article>
 
 
-            {/* =================================================
-                KEY POINTS
-            ================================================= */}
+            {}
 
             <article
               style={{
@@ -556,9 +545,7 @@ export default function LearnPage({
             </article>
 
 
-            {/* =================================================
-                LEARNING CARDS
-            ================================================= */}
+            {}
 
             <article
               style={{
@@ -725,9 +712,7 @@ export default function LearnPage({
             </article>
 
 
-            {/* =================================================
-                YOUTUBE
-            ================================================= */}
+            {}
 
             {learning.youtubeVideoId && (
               <article
@@ -808,9 +793,7 @@ export default function LearnPage({
             )}
 
 
-            {/* =================================================
-                Q&A
-            ================================================= */}
+            {}
 
             <article
               style={{
@@ -960,9 +943,7 @@ export default function LearnPage({
             </article>
 
 
-            {/* =================================================
-                QUIZ
-            ================================================= */}
+            {}
 
             <article
               style={{
@@ -1258,9 +1239,7 @@ export default function LearnPage({
             </article>
 
 
-            {/* =================================================
-                START QUEST
-            ================================================= */}
+            {}
 
             <section
               style={{
@@ -1357,9 +1336,7 @@ export default function LearnPage({
       </div>
 
 
-      {/* =================================================
-          ANIMATION
-      ================================================= */}
+      {}
 
       <style>
         {`
@@ -1397,12 +1374,6 @@ export default function LearnPage({
   );
 }
 
-
-/*
-=========================================================
-REUSABLE INLINE STYLES
-=========================================================
-*/
 
 const cardStyle = {
   borderRadius: "22px",

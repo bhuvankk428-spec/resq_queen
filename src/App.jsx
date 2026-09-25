@@ -28,50 +28,23 @@ import LearnPage from "./components/LearnPage";
 
 
 export default function App() {
-  /*
-  =====================================================
-  AUTH
-  =====================================================
-  */
+  
 
   const [user, setUser] = useState(undefined);
 
-  /*
-  =====================================================
-  APP VIEW
-  =====================================================
-
-  splash
-  setup
-  story
-  loading
-  error
-  home
-  learn
-  leaderboard
-  game
-  result
-  */
+  
 
   const [view, setView] = useState("splash");
 
 
-  /*
-  =====================================================
-  PLAYER
-  =====================================================
-  */
+  
 
   const [player, setPlayer] = useState(null);
 
   const [name, setName] = useState("");
 
 
-  /*
-  =====================================================
-  QUEST SETTINGS
-  =====================================================
-  */
+  
 
   const [topic, setTopic] = useState("");
 
@@ -79,11 +52,7 @@ export default function App() {
     useState("Mixed");
 
 
-  /*
-  =====================================================
-  GAME
-  =====================================================
-  */
+  
 
   const [questions, setQuestions] =
     useState([]);
@@ -104,31 +73,19 @@ export default function App() {
     useState(false);
 
 
-  /*
-  =====================================================
-  STORY
-  =====================================================
-  */
+  
 
   const [storyStep, setStoryStep] =
     useState(0);
 
 
-  /*
-  =====================================================
-  ERROR
-  =====================================================
-  */
+  
 
   const [error, setError] =
     useState("");
 
 
-  /*
-  =====================================================
-  REQUEST CONTROL
-  =====================================================
-  */
+  
 
   const requestId =
     useRef(0);
@@ -137,11 +94,7 @@ export default function App() {
     useRef();
 
 
-  /*
-  =====================================================
-  SUPABASE AUTH
-  =====================================================
-  */
+  
 
   useEffect(() => {
     if (!supabase) {
@@ -173,11 +126,7 @@ export default function App() {
   }, []);
 
 
-  /*
-  =====================================================
-  LOAD PLAYER
-  =====================================================
-  */
+  
 
   useEffect(() => {
     if (!user) return;
@@ -196,11 +145,7 @@ export default function App() {
   }, [user]);
 
 
-  /*
-  =====================================================
-  START APPLICATION
-  =====================================================
-  */
+  
 
   const start = () => {
     setView(
@@ -211,11 +156,7 @@ export default function App() {
   };
 
 
-  /*
-  =====================================================
-  RESET GAME
-  =====================================================
-  */
+  
 
   const resetGame = () => {
     setCurrent(0);
@@ -230,11 +171,7 @@ export default function App() {
   };
 
 
-  /*
-  =====================================================
-  LAUNCH QUEST
-  =====================================================
-  */
+  
 
   const launch = async () => {
 
@@ -258,9 +195,7 @@ export default function App() {
       ++requestId.current;
 
 
-    /*
-    Cancel previous request
-    */
+    
 
     aborter.current?.abort();
 
@@ -278,9 +213,7 @@ export default function App() {
         );
 
 
-      /*
-      Ignore outdated requests
-      */
+      
 
       if (
         id !== requestId.current
@@ -315,11 +248,6 @@ export default function App() {
   };
 
 
-  /*
-  =====================================================
-  PLAYER SETUP
-  =====================================================
-  */
 
   const setupDone = () => {
 
@@ -360,11 +288,7 @@ export default function App() {
   };
 
 
-  /*
-  =====================================================
-  ANSWER QUESTION
-  =====================================================
-  */
+  
 
   const answer = (i) => {
 
@@ -399,17 +323,11 @@ export default function App() {
     setLives(nextLives);
 
 
-    /*
-    Give player time to see
-    correct/wrong answer
-    */
+    
 
     setTimeout(() => {
 
-      /*
-      Game finished
-      */
-
+      
       if (
         nextLives === 0 ||
         current === 9
@@ -441,9 +359,7 @@ export default function App() {
 
       } else {
 
-        /*
-        Next question
-        */
+       
 
         setCurrent(
           (c) => c + 1
@@ -458,11 +374,7 @@ export default function App() {
   };
 
 
-  /*
-  =====================================================
-  AUTH LOADING
-  =====================================================
-  */
+ 
 
   if (user === undefined) {
 
@@ -478,22 +390,11 @@ export default function App() {
   }
 
 
-  /*
-  =====================================================
-  NOT LOGGED IN
-  =====================================================
-  */
-
   if (!user) {
     return <AuthScreen />;
   }
 
 
-  /*
-  =====================================================
-  SPLASH
-  =====================================================
-  */
 
   if (view === "splash") {
 
@@ -505,11 +406,6 @@ export default function App() {
   }
 
 
-  /*
-  =====================================================
-  PLAYER SETUP
-  =====================================================
-  */
 
   if (view === "setup") {
 
@@ -534,11 +430,6 @@ export default function App() {
   }
 
 
-  /*
-  =====================================================
-  STORY
-  =====================================================
-  */
 
   if (view === "story") {
 
@@ -566,22 +457,11 @@ export default function App() {
   }
 
 
-  /*
-  =====================================================
-  LOADING
-  =====================================================
-  */
 
   if (view === "loading") {
     return <Loading />;
   }
 
-
-  /*
-  =====================================================
-  ERROR
-  =====================================================
-  */
 
   if (view === "error") {
 
@@ -603,11 +483,6 @@ export default function App() {
   }
 
 
-  /*
-  =====================================================
-  HOME
-  =====================================================
-  */
 
   if (view === "home") {
 
@@ -625,16 +500,11 @@ export default function App() {
           setDifficulty
         }
 
-        /*
-        Begin quest
-        */
+        
 
         begin={launch}
 
 
-        /*
-        Leaderboard
-        */
 
         leaderboard={() =>
           setView(
@@ -643,9 +513,7 @@ export default function App() {
         }
 
 
-        /*
-        LEARN BUTTON
-        */
+    
 
         learn={() => {
 
@@ -658,9 +526,6 @@ export default function App() {
         }}
 
 
-        /*
-        Logout
-        */
 
         logout={async () => {
 
@@ -676,38 +541,24 @@ export default function App() {
   }
 
 
-  /*
-  =====================================================
-  LEARNING PAGE
-  =====================================================
-  */
 
   if (view === "learn") {
 
     return (
       <LearnPage
 
-        /*
-        Back to Home
-        */
+
 
         home={() =>
           setView("home")
         }
 
 
-        /*
-        Start Quest after learning
-        */
-
         startQuest={(
           learnedTopic
         ) => {
 
-          /*
-          Use the topic that
-          the player learned
-          */
+        
 
           if (
             learnedTopic &&
@@ -721,9 +572,6 @@ export default function App() {
           }
 
 
-          /*
-          Return to Home
-          */
 
           setView("home");
 
@@ -733,11 +581,6 @@ export default function App() {
   }
 
 
-  /*
-  =====================================================
-  LEADERBOARD
-  =====================================================
-  */
 
   if (
     view === "leaderboard"
@@ -753,11 +596,6 @@ export default function App() {
   }
 
 
-  /*
-  =====================================================
-  RESULT
-  =====================================================
-  */
 
   if (view === "result") {
 
@@ -781,11 +619,6 @@ export default function App() {
   }
 
 
-  /*
-  =====================================================
-  GAME
-  =====================================================
-  */
 
   return (
     <main className="game">

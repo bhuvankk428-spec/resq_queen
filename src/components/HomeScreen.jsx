@@ -23,7 +23,7 @@ export default function HomeScreen({
 
       <div className="home-layout">
 
-        {/* Main Challenge Card */}
+        {}
         <section className="card form">
           <h2>Choose your challenge</h2>
 
@@ -73,7 +73,7 @@ export default function HomeScreen({
           </button>
         </section>
 
-        {/* Learn Card */}
+        {}
         <section className="learn-card">
 
           <div className="learn-icon">

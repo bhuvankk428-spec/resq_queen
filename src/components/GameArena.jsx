@@ -1,15 +1,12 @@
 export default function GameArena({ score, won }) {
   const progress = Math.min(score, 7) / 7;
 
-  // King moves from left -> toward castle
   const kingLeft = 5 + progress * 65;
 
   return (
     <div className={`arena ${won ? "rescued" : ""}`}>
 
-      {/* =========================
-          BACKGROUND
-      ========================== */}
+      {}
       <div className="arena-sky">
         <div className="moon" />
 
@@ -20,7 +17,7 @@ export default function GameArena({ score, won }) {
         <div className="mountains mountains-back" />
         <div className="mountains mountains-front" />
 
-        {/* atmospheric particles */}
+        {}
         <div className="particles">
           <span />
           <span />
@@ -33,12 +30,10 @@ export default function GameArena({ score, won }) {
         </div>
       </div>
 
-      {/* =========================
-          GAMEPLAY
-      ========================== */}
+      {}
       {!won && (
         <>
-          {/* Distant castle glow */}
+          {}
           <div
             className="castle-glow"
             style={{
@@ -47,7 +42,7 @@ export default function GameArena({ score, won }) {
             }}
           />
 
-          {/* CASTLE */}
+          {}
           <div
             className="castle"
             style={{
@@ -61,18 +56,18 @@ export default function GameArena({ score, won }) {
               alt="Enemy castle"
             />
 
-            {/* castle fire */}
+            {}
             <div className="fire fire-1" />
             <div className="fire fire-2" />
             <div className="fire fire-3" />
           </div>
 
-          {/* Road leading toward castle */}
+          {}
           <div className="road">
             <div className="road-light" />
           </div>
 
-          {/* KING */}
+          {}
           <div
             className="king-wrapper"
             style={{
@@ -87,7 +82,7 @@ export default function GameArena({ score, won }) {
               alt="King"
             />
 
-            {/* movement dust */}
+            {}
             {progress > 0 && (
               <>
                 <span className="dust dust-1" />
@@ -97,7 +92,7 @@ export default function GameArena({ score, won }) {
             )}
           </div>
 
-          {/* progress indicator */}
+          {}
           <div className="journey">
             <div className="journey-track">
               <div
@@ -119,9 +114,7 @@ export default function GameArena({ score, won }) {
         </>
       )}
 
-      {/* =========================
-          VICTORY
-      ========================== */}
+      {}
       {won && (
         <div className="victory-scene">
 
@@ -147,15 +140,13 @@ export default function GameArena({ score, won }) {
         </div>
       )}
 
-      {/* =========================
-          GROUND
-      ========================== */}
+      {}
       <div className="ground">
         <div className="grass-layer" />
         <div className="ground-shadow" />
       </div>
 
-      {/* cinematic vignette */}
+      {}
       <div className="vignette" />
     </div>
   );
