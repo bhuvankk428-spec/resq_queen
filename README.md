@@ -12,7 +12,7 @@ The application combines a story-driven quiz game with an AI-powered learning mo
 
 ## 🚀 Quick Links
 
-* **Live Demo:** https://res-queen.vercel.app/
+* **Live Demo:** https://resq-queen.vercel.app/
 * **GitHub Repository:** https://github.com/bhuvankk428-spec/resq_queen
 
 ---
@@ -295,7 +295,16 @@ The frontend is responsible for:
 The backend is built using Node.js and Express.
 
 ```text
+api/
+│
+├── index.js
+├── generate.js
+├── leaderboard.js
+└── learn.js
+
 server/
+│
+├── app.js
 │
 ├── server.js
 │
@@ -312,13 +321,17 @@ server/
     └── questionPrompt.js
 ```
 
+Every file in `api/` is a Vercel Serverless Function entry point. They all build
+the same Express app from `server/app.js`, so `/api/generate`, `/api/leaderboard`
+and `/api/learn` each resolve to a function without any rewrite rules.
+
 ### API Routes
 
-| Route          | Purpose                               |
-| -------------- | ------------------------------------- |
-| `/generate`    | Generates quiz questions              |
-| `/learn`       | Generates structured learning content |
-| `/leaderboard` | Handles leaderboard data              |
+| Route              | Purpose                               |
+| ------------------ | ------------------------------------- |
+| `/api/generate`    | Generates quiz questions              |
+| `/api/learn`       | Generates structured learning content |
+| `/api/leaderboard` | Handles leaderboard data              |
 
 The backend keeps the OpenAI API key server-side instead of exposing it in the React application.
 
@@ -772,6 +785,12 @@ The leaderboard allows users to view game performance after completing quizzes.
 ```text
 resq_queen/
 │
+├── api/
+│   ├── index.js
+│   ├── generate.js
+│   ├── leaderboard.js
+│   └── learn.js
+│
 ├── public/
 │   ├── enemy.png
 │   ├── Enemy_home.png
@@ -784,6 +803,8 @@ resq_queen/
 │   └── sword.png
 │
 ├── server/
+│   ├── app.js
+│   │
 │   ├── server.js
 │   │
 │   ├── prompts/
@@ -938,8 +959,7 @@ Do not commit real API keys to GitHub.
 Start the backend:
 
 ```bash
-cd server
-npm start
+npm run server
 ```
 
 Start the frontend in another terminal:
@@ -948,7 +968,8 @@ Start the frontend in another terminal:
 npm run dev
 ```
 
-The Vite development server will provide the local frontend URL.
+The Vite development server will provide the local frontend URL, and its proxy
+forwards `/api/*` to the backend on `http://localhost:3001`.
 
 ---
 

@@ -3,17 +3,30 @@ import OpenAI from "openai";
 
 const router = express.Router();
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+const LEARN_MODEL = process.env.OPENAI_LEARN_MODEL || "gpt-5-mini";
 
+let openaiClient = null;
+
+function openai() {
+  if (!openaiClient) {
+    if (!process.env.OPENAI_API_KEY) {
+      const error = new Error(
+        "Server is missing OPENAI_API_KEY. Add it to the environment and redeploy."
+      );
+      error.status = 503;
+      throw error;
+    }
+    openaiClient = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY,
+    });
+  }
+  return openaiClient;
+}
 
 
 router.post("/", async (req, res) => {
   try {
-    const { topic } = req.body;
-
-    
+    const { topic } = req.body || {};
 
     if (
       !topic ||
@@ -30,6 +43,13 @@ router.post("/", async (req, res) => {
     if (cleanTopic.length > 140) {
       return res.status(400).json({
         error: "Topic must be less than 140 characters.",
+      });
+    }
+
+    if (!process.env.OPENAI_API_KEY) {
+      return res.status(503).json({
+        error:
+          "The lesson generator is not configured. Add OPENAI_API_KEY and redeploy.",
       });
     }
 
@@ -92,6 +112,12 @@ router.post("/", async (req, res) => {
       error
     );
 
+    if (error.status === 503) {
+      return res.status(503).json({
+        error: error.message,
+      });
+    }
+
     return res.status(500).json({
       error:
         "Failed to generate learning content.",
@@ -104,8 +130,8 @@ router.post("/", async (req, res) => {
 async function generateLearningContent(topic) {
   try {
     const response =
-      await openai.responses.create({
-        model: "gpt-5-mini",
+      await openai().responses.create({
+        model: LEARN_MODEL,
 
         input: [
           {
@@ -226,7 +252,15 @@ STRICT REQUIREMENTS:
       error
     );
 
-    return null;
+    if (error.status === 503) {
+      throw error;
+    }
+
+    const e = new Error(
+      "The AI lesson generator is unavailable right now. Please retry."
+    );
+    e.status = 502;
+    throw e;
   }
 }
 
@@ -795,8 +829,8 @@ Return ONLY:
   }
 
   const response =
-    await openai.responses.create({
-      model: "gpt-5-mini",
+    await openai().responses.create({
+      model: LEARN_MODEL,
 
       input: [
         {

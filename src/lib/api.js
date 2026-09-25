@@ -40,6 +40,18 @@ export async function syncLeaderboard(player) {
     throw new Error(data.error || "Unable to save your score.");
   }
 }
+export async function fetchLearn(topic, signal) {
+  const res = await fetch("/api/learn", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    signal,
+    body: JSON.stringify({ topic }),
+  });
+  const data = await res.json().catch(() => null);
+  if (!res.ok)
+    throw new Error(data?.error || "Failed to generate learning content.");
+  return data;
+}
 export async function fetchLeaderboard(signal) {
   const res = await fetch("/api/leaderboard", { signal });
   const data = await res.json().catch(() => null);

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { fetchLearn } from "../lib/api";
 
 export default function LearnPage({
   home,
@@ -27,26 +28,7 @@ export default function LearnPage({
     setShowAnswers({});
 
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}api/learn`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            topic: cleanTopic,
-          }),
-        }
-      );
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(
-          data.error ||
-            "Failed to generate learning content."
-        );
-      }
+      const data = await fetchLearn(cleanTopic);
 
       setLearning(data);
     } catch (err) {
