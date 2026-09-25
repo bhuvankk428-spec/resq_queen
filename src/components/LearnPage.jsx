@@ -27,8 +27,7 @@ export default function LearnPage({
     setShowAnswers({});
 
     try {
-      const response = await fetch(
-  "https://resq-queen-api.vercel.app/api/learn",
+      const response = await fetch(`${import.meta.env.VITE_API_URL}api/learn`,
         {
           method: "POST",
           headers: {
