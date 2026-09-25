@@ -15,6 +15,10 @@ The application combines a story-driven quiz game with an AI-powered learning mo
 * **Live Demo:** https://resq-queen.vercel.app/
 * **GitHub Repository:** https://github.com/bhuvankk428-spec/resq_queen
 
+
+<video controls width="800">
+  <source src="./public/demo.mp4" type="video/mp4">
+</video>
 ---
 
 # 📌 Project Overview
@@ -76,7 +80,7 @@ Users can enter any topic and generate:
 
 ## 🤖 AI Integration
 
-* OpenAI GPT-5-mini
+* OpenAI GPT-4o-mini (quiz) and GPT-5-mini (learning)
 * Structured JSON responses
 * JSON parsing
 * Response validation
@@ -473,7 +477,7 @@ React Frontend
 Backend API
     │
     ▼
-OpenAI GPT-5-mini
+OpenAI (GPT-4o-mini / GPT-5-mini)
     │
     ▼
 Structured JSON
@@ -690,16 +694,19 @@ If the YouTube tutorial search fails, the application uses a fallback search app
 
 #  Request Handling / Stale Responses
 
-The application prevents overlapping AI generation requests at the UI level.
+The application prevents stale AI results from overwriting newer ones.
 
-When a generation request starts, the user cannot start another generation request until the current request finishes with either:
+When a new quiz generation request starts:
+
+* the previous in-flight request is aborted with `AbortController`
+* a request id guard ignores responses that belong to an older request
+
+The user therefore cannot start another generation request until the current request finishes with either:
 
 * a successful result, or
 * an error.
 
-Therefore, multiple user-triggered AI requests cannot compete to update the same result state.
-
-This is the current approach used by the application instead of allowing concurrent requests.
+As a result, multiple user-triggered AI requests cannot compete to update the same result state.
 
 ---
 
@@ -871,7 +878,8 @@ resq_queen/
 
 ## AI
 
-* OpenAI GPT-5-mini
+* OpenAI GPT-4o-mini (quiz generation)
+* OpenAI GPT-5-mini (learning content)
 * Structured JSON generation
 * AI response validation
 * AI repair/retry
@@ -925,30 +933,49 @@ cd resq_queen
 npm install
 ```
 
-If the backend has a separate package configuration:
-
-```bash
-cd server
-npm install
-```
+All dependencies (frontend and backend) live in the root `package.json`.
 
 ---
 
 # 🔑 Environment Variables
 
-Create the required environment files based on `.env.example`.
+Create a `.env` file in the project root by copying the template:
 
-Example configuration:
+```bash
+cp .env.example .env
+```
+
+`.env` is gitignored.
 
 ```env
+# Server-side secrets (never sent to the browser)
 OPENAI_API_KEY=your_openai_api_key
 
 YOUTUBE_API_KEY=your_youtube_api_key
 
+SUPABASE_URL=your_supabase_project_url
+
+SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
+
+# Optional server-side overrides
+OPENAI_MODEL=gpt-4o-mini
+
+OPENAI_LEARN_MODEL=gpt-5-mini
+
+PORT=3001
+
+# Frontend configuration (baked into the bundle during `vite build`)
 VITE_SUPABASE_URL=your_supabase_url
 
 VITE_SUPABASE_PUBLISHABLE_KEY=your_supabase_publishable_key
 ```
+
+* `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` are used by the leaderboard
+  API. Without them the leaderboard routes answer `503` with a clear message.
+* `VITE_*` values are only read at build time, so they must also be present in
+  Vercel before the frontend is built.
+* The frontend does not need any API base URL: it calls same-origin
+  `/api/...` paths.
 
 Do not commit real API keys to GitHub.
 
@@ -970,6 +997,44 @@ npm run dev
 
 The Vite development server will provide the local frontend URL, and its proxy
 forwards `/api/*` to the backend on `http://localhost:3001`.
+
+---
+
+# 🌐 Deployment (Vercel)
+
+The repository deploys as a single Vercel project:
+
+* `vite build` produces the static frontend in `dist/` (Vercel's default for
+  this project).
+* Every file in `api/` becomes a Serverless Function, so `/api/generate`,
+  `/api/leaderboard` and `/api/learn` are served from the same domain as the
+  frontend.
+* No `vercel.json` rewrite rules are needed: the frontend calls same-origin
+  `/api/...` paths and each route maps directly to a function file.
+
+### Deploy
+
+```bash
+npx vercel --prod
+```
+
+Or connect the GitHub repository to Vercel and push to `main`.
+
+### Configure environment variables
+
+Add every variable from the Environment Variables section under
+**Project Settings → Environment Variables** for Production (and Preview).
+`VITE_*` values must exist before the build runs.
+
+### Verify the deployment
+
+```bash
+curl https://resq-queen.vercel.app/api/leaderboard
+```
+
+* `200` with a JSON array — the backend is connected.
+* `503` with a JSON error — server-side Supabase variables are missing.
+* `404` — the API functions are not part of the deployment.
 
 ---
 
@@ -1057,7 +1122,7 @@ AI development tools were used during development for:
 * AI-generated content can still occasionally require repair/retry.
 * AI response quality depends on the selected topic and model response.
 * YouTube tutorial availability depends on the YouTube API and search results.
-* The current stale-response strategy prevents overlapping requests at the UI level rather than using request cancellation.
+* Quiz generation requests are aborted with `AbortController`, but learning requests are not cancelled yet.
 
 * AI API usage can incur costs depending on provider usage and account limits.
 
@@ -1067,7 +1132,7 @@ AI development tools were used during development for:
 
 Potential improvements include:
 
-* AbortController-based request cancellation
+* Abort in-flight learning requests as well
 * Streaming AI responses
 * More learning content types
 * Save and reload learning sessions
