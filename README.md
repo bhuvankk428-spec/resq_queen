@@ -15,10 +15,8 @@ The application combines a story-driven quiz game with an AI-powered learning mo
 * **Live Demo:** https://resq-queen.vercel.app/
 * **GitHub Repository:** https://github.com/bhuvankk428-spec/resq_queen
 
+* **Live Demoestration and youtube explaination:** https://youtu.be/63IO5uWvjC4
 
-<video controls width="800">
-  <source src="./public/demo.mp4" type="video/mp4">
-</video>
 ---
 
 # 📌 Project Overview
