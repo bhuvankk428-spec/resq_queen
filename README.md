@@ -1117,12 +1117,22 @@ AI development tools were used during development for:
 
 # 🔒 Known Limitations
 
+### AI and content
+
 * AI-generated content can still occasionally require repair/retry.
 * AI response quality depends on the selected topic and model response.
 * YouTube tutorial availability depends on the YouTube API and search results.
 * Quiz generation requests are aborted with `AbortController`, but learning requests are not cancelled yet.
 
 * AI API usage can incur costs depending on provider usage and account limits.
+
+### Quiz resume and fullscreen enforcement
+
+* **Refreshing during a quiz needs one extra click.** Browsers only allow entering fullscreen from a user gesture, so a reload cannot restore fullscreen by itself. The quiz resumes at the exact question it was left on, then shows a "Fullscreen required" gate; one click continues in fullscreen.
+* **F11 (browser-chrome fullscreen) is not detectable.** The Fullscreen API cannot observe the F11 state, so enforcement only reacts to fullscreen entered through the API and to leaving that mode (Esc, or the browser's own exit control).
+* **iOS Safari has no Fullscreen API**, so `requestFullscreen` does not exist there. The fullscreen gate and the leave-fullscreen rule disable themselves automatically and the quiz plays exactly as before.
+* **Game state and answers are client-side.** Questions (including correct answers), the score, and the saved quiz session live in the bundle and in `localStorage`, so they can be read or edited with browser devtools. The leaderboard is therefore not tamper-proof. This is a property of the original design, not of the resume/fullscreen changes.
+* **The resume/fullscreen work in `App.jsx` includes incidental whitespace churn** from formatting. It is cosmetic only and does not affect behavior.
 
 ---
 
