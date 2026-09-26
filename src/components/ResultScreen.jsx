@@ -1,5 +1,12 @@
 import GameArena from "./GameArena";
-export default function ResultScreen({ won, score, lives, again, home }) {
+export default function ResultScreen({
+  won,
+  score,
+  lives,
+  notice,
+  again,
+  home,
+}) {
   return (
     <main className="screen result">
       <GameArena score={score} won={won} />
@@ -20,6 +27,9 @@ export default function ResultScreen({ won, score, lives, again, home }) {
           Lives <b>{lives}/3</b>
         </span>
       </div>
+
+      {notice && <p className="muted result-notice">{notice}</p>}
+
       <div className="actions">
         <button onClick={again}>Play again</button>
         <button className="ghost" onClick={home}>

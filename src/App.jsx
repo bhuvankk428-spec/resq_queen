@@ -9,6 +9,9 @@ import {
   getPlayer,
   savePlayer,
   recordResult,
+  loadQuizSession,
+  saveQuizSession,
+  clearQuizSession,
 } from "./lib/storage";
 
 import { supabase } from "./lib/supabase";
@@ -34,7 +37,12 @@ export default function App() {
 
   
 
-  const [view, setView] = useState("splash");
+  const [session] =
+    useState(loadQuizSession);
+
+  const [view, setView] = useState(
+    () => session?.view || "splash"
+  );
 
 
   
@@ -46,31 +54,48 @@ export default function App() {
 
   
 
-  const [topic, setTopic] = useState("");
+  const [topic, setTopic] = useState(
+    () => session?.topic || ""
+  );
 
   const [difficulty, setDifficulty] =
-    useState("Mixed");
+    useState(() => session?.difficulty || "Mixed");
 
 
   
 
   const [questions, setQuestions] =
-    useState([]);
+    useState(() => session?.questions || []);
 
   const [current, setCurrent] =
-    useState(0);
+    useState(() => session?.current || 0);
 
   const [score, setScore] =
-    useState(0);
+    useState(() => session?.score || 0);
 
   const [lives, setLives] =
-    useState(3);
+    useState(() => session?.lives ?? 3);
 
   const [selected, setSelected] =
-    useState(null);
+    useState(() => session?.selected ?? null);
 
   const [answered, setAnswered] =
+    useState(() => session?.answered === true);
+
+  const [answers, setAnswers] =
+    useState(() => session?.answers || []);
+
+
+  
+
+  const [fsActive, setFsActive] =
     useState(false);
+
+  const [fsGateDismissed, setFsGateDismissed] =
+    useState(false);
+
+  const [endReason, setEndReason] =
+    useState("");
 
 
   
@@ -93,8 +118,251 @@ export default function App() {
   const aborter =
     useRef();
 
+  const playerRef =
+    useRef(null);
+
+  const restorePendingRef =
+    useRef(session?.answered === true);
+
+  const viewRef = useRef();
+
+  const scoreRef = useRef();
+
+  const fsEnteredRef =
+    useRef(false);
+
+  const teardownRef =
+    useRef(false);
+
+
+  viewRef.current = view;
+
+  scoreRef.current = score;
+
+
+  const fsSupported =
+    typeof document !== "undefined" &&
+    !!(
+      document.documentElement
+        .requestFullscreen ||
+      document.documentElement
+        .webkitRequestFullscreen
+    );
+
+
+  const requestFullscreenNow = (onFail) => {
+    try {
+      const el = document.documentElement;
+
+      const fn =
+        el.requestFullscreen ||
+        el.webkitRequestFullscreen;
+
+      if (!fn) {
+        onFail?.();
+        return;
+      }
+
+      const p = fn.call(el);
+
+      if (p && typeof p.catch === "function") {
+        p.catch(() => onFail?.());
+      }
+    } catch {
+      onFail?.();
+    }
+  };
+
+
+  const leaveFullscreen = () => {
+    fsEnteredRef.current = false;
+
+    try {
+      const el =
+        document.fullscreenElement ||
+        document.webkitFullscreenElement;
+
+      if (!el) return;
+
+      const p = (
+        document.exitFullscreen ||
+        document.webkitExitFullscreen
+      )?.call(document);
+
+      if (p && typeof p.catch === "function") {
+        p.catch(() => {});
+      }
+    } catch {
+      /* ignore */
+    }
+  };
+
+
+  const endQuiz = (reason) => {
+    if (
+      teardownRef.current ||
+      viewRef.current !== "game"
+    ) {
+      return;
+    }
+
+
+    const saved = playerRef.current;
+
+    const won = scoreRef.current >= 7;
+
+
+    const updated = saved
+      ? recordResult(saved, won)
+      : null;
+
+
+    if (updated) {
+      playerRef.current = updated;
+
+      setPlayer(updated);
+
+      syncLeaderboard(updated).catch((e) => {
+        console.warn(
+          "Leaderboard sync:",
+          e.message
+        );
+      });
+    }
+
+
+    setEndReason(reason || "");
+
+    clearQuizSession();
+
+    leaveFullscreen();
+
+    setView("result");
+  };
+
 
   
+
+  useEffect(() => {
+    playerRef.current = player;
+  }, [player]);
+
+
+  
+
+  useEffect(() => {
+    const markGone = () => {
+      teardownRef.current = true;
+    };
+
+    const onFsChange = () => {
+      const active = !!(
+        document.fullscreenElement ||
+        document.webkitFullscreenElement
+      );
+
+      if (active) {
+        fsEnteredRef.current = true;
+
+        setFsActive(true);
+
+        return;
+      }
+
+      const wasIn = fsEnteredRef.current;
+
+      fsEnteredRef.current = false;
+
+      setFsActive(false);
+
+      if (
+        !wasIn ||
+        teardownRef.current ||
+        viewRef.current !== "game"
+      ) {
+        return;
+      }
+
+      setTimeout(() => {
+        if (teardownRef.current) return;
+
+        endQuiz(
+          "You left fullscreen mode, so the quest has ended."
+        );
+      }, 0);
+    };
+
+
+    window.addEventListener("pagehide", markGone);
+
+    window.addEventListener(
+      "beforeunload",
+      markGone
+    );
+
+    document.addEventListener(
+      "fullscreenchange",
+      onFsChange
+    );
+
+    document.addEventListener(
+      "webkitfullscreenchange",
+      onFsChange
+    );
+
+    return () => {
+      window.removeEventListener("pagehide", markGone);
+
+      window.removeEventListener(
+        "beforeunload",
+        markGone
+      );
+
+      document.removeEventListener(
+        "fullscreenchange",
+        onFsChange
+      );
+
+      document.removeEventListener(
+        "webkitfullscreenchange",
+        onFsChange
+      );
+    };
+  }, []);
+
+
+  
+
+  useEffect(() => {
+    if (view !== "game") return;
+
+    if (
+      document.fullscreenElement ||
+      document.webkitFullscreenElement
+    ) {
+      return;
+    }
+
+    requestFullscreenNow();
+  }, [view]);
+
+
+  
+
+  useEffect(() => {
+    if (
+      view === "game" ||
+      view === "loading" ||
+      view === "story"
+    ) {
+      return;
+    }
+
+    leaveFullscreen();
+  }, [view]);
+
+
+
 
   useEffect(() => {
     if (!supabase) {
@@ -142,7 +410,99 @@ export default function App() {
         user.user_metadata?.name ||
         "King"
     );
+
+
+    const s =
+      loadQuizSession();
+
+    if (
+      s &&
+      s.userId &&
+      s.userId !== user.id
+    ) {
+
+      setView("splash");
+
+      setTopic("");
+
+      setDifficulty("Mixed");
+
+      setQuestions([]);
+
+      setCurrent(0);
+
+      setScore(0);
+
+      setLives(3);
+
+      setSelected(null);
+
+      setAnswered(false);
+
+      setAnswers([]);
+    }
   }, [user]);
+
+
+  
+
+  useEffect(() => {
+    if (!user) return;
+
+    if (view === "game") {
+
+      const stored =
+        loadQuizSession();
+
+      if (
+        stored &&
+        stored.userId &&
+        stored.userId !== user.id
+      ) {
+        return;
+      }
+
+      saveQuizSession({
+        userId: user.id,
+
+        view,
+
+        topic,
+
+        difficulty,
+
+        questions,
+
+        current,
+
+        score,
+
+        lives,
+
+        answers,
+
+        selected,
+
+        answered,
+      });
+
+    } else {
+
+      clearQuizSession();
+    }
+  }, [
+    user,
+    view,
+    topic,
+    difficulty,
+    questions,
+    current,
+    score,
+    lives,
+    answers,
+    selected,
+    answered,
+  ]);
 
 
   
@@ -168,6 +528,8 @@ export default function App() {
     setSelected(null);
 
     setAnswered(false);
+
+    setAnswers([]);
   };
 
 
@@ -186,7 +548,17 @@ export default function App() {
     }
 
 
+    clearQuizSession();
+
     resetGame();
+
+    teardownRef.current = false;
+
+    setFsGateDismissed(false);
+
+    setEndReason("");
+
+    requestFullscreenNow();
 
     setView("loading");
 
@@ -290,6 +662,87 @@ export default function App() {
 
   
 
+  const proceed = (finalScore, finalLives) => {
+
+    if (viewRef.current !== "game") {
+      return;
+    }
+
+
+    if (
+      finalLives === 0 ||
+      current === 9
+    ) {
+
+      const saved =
+        playerRef.current;
+
+
+      const updated = saved
+        ? recordResult(
+            saved,
+            finalScore >= 7
+          )
+        : null;
+
+
+      if (updated) {
+
+        playerRef.current = updated;
+
+        setPlayer(updated);
+
+
+        syncLeaderboard(
+          updated
+        ).catch((e) => {
+
+          console.warn(
+            "Leaderboard sync:",
+            e.message
+          );
+
+        });
+      }
+
+
+      setView("result");
+
+    } else {
+
+      setCurrent(
+        (c) => c + 1
+      );
+
+      setSelected(null);
+
+      setAnswered(false);
+    }
+  };
+
+
+  
+
+  useEffect(() => {
+    if (
+      !user ||
+      !restorePendingRef.current
+    ) {
+      return;
+    }
+
+    const t = setTimeout(() => {
+      restorePendingRef.current = false;
+
+      proceed(score, lives);
+    }, 5000);
+
+    return () => clearTimeout(t);
+  }, [user]);
+
+
+  
+
   const answer = (i) => {
 
     if (answered) {
@@ -322,55 +775,25 @@ export default function App() {
 
     setLives(nextLives);
 
+    setAnswers((prev) => {
+      const next = Array.isArray(prev)
+        ? [...prev]
+        : [];
 
-    
+      next[current] = i;
 
-    setTimeout(() => {
-
-      
-      if (
-        nextLives === 0 ||
-        current === 9
-      ) {
-
-        const updated =
-          recordResult(
-            player,
-            nextScore >= 7
-          );
+      return next;
+    });
 
 
-        setPlayer(updated);
-
-
-        syncLeaderboard(
-          updated
-        ).catch((e) => {
-
-          console.warn(
-            "Leaderboard sync:",
-            e.message
-          );
-
-        });
-
-
-        setView("result");
-
-      } else {
-
-       
-
-        setCurrent(
-          (c) => c + 1
-        );
-
-        setSelected(null);
-
-        setAnswered(false);
-      }
-
-    }, 5000);
+    setTimeout(
+      () =>
+        proceed(
+          nextScore,
+          nextLives
+        ),
+      5000
+    );
   };
 
 
@@ -531,6 +954,8 @@ export default function App() {
 
           await supabase?.auth.signOut();
 
+          clearQuizSession();
+
           setPlayer(null);
 
           setView("splash");
@@ -609,6 +1034,8 @@ export default function App() {
 
         lives={lives}
 
+        notice={endReason}
+
         again={launch}
 
         home={() =>
@@ -618,6 +1045,13 @@ export default function App() {
     );
   }
 
+
+
+  const showFsGate =
+    fsSupported &&
+    view === "game" &&
+    !fsActive &&
+    !fsGateDismissed;
 
 
   return (
@@ -644,6 +1078,35 @@ export default function App() {
 
         onAnswer={answer}
       />
+
+      {showFsGate && (
+        <div className="fs-gate">
+          <div className="card fs-gate-card">
+            <p className="eyebrow">
+              FULLSCREEN REQUIRED
+            </p>
+
+            <h2>The quest waits for you</h2>
+
+            <p>
+              Save the Queen only runs in fullscreen.
+              Entering fullscreen will resume question{" "}
+              {current + 1}. Leaving fullscreen ends the
+              run.
+            </p>
+
+            <button
+              onClick={() =>
+                requestFullscreenNow(() =>
+                  setFsGateDismissed(true)
+                )
+              }
+            >
+              Enter fullscreen &amp; continue
+            </button>
+          </div>
+        </div>
+      )}
 
     </main>
   );
