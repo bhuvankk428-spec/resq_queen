@@ -2,7 +2,7 @@
 
 ### AI-Powered Interactive Learning & Quiz Platform
 
-**Flam — Frontend Internship Assignment**
+**Flam —  Assignment**
 
 Save the Queen is an AI-powered interactive learning and quiz application built with React. Instead of behaving like a chatbot, the application uses AI to generate **structured JSON data** that is validated and transformed into interactive UI components.
 
