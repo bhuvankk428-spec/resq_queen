@@ -6,7 +6,7 @@ export default function LoadingState() {
     <section className="state">
       <img
         className="waiting"
-        src="/King.png"
+        src="/King.webp"
         alt="King waiting"
         style={{
           width: "180px",

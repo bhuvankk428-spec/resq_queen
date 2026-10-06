@@ -10,7 +10,7 @@ export default function AuthScreen({ error }) {
   };
   return (
     <main className="splash">
-      <img className="logo" src="/logo.png" />
+      <img className="logo" src="/logo.webp" />
       <p>AI KNOWLEDGE QUEST</p>
       <h1>SAVE THE QUEEN</h1>
       <p className="tagline">Sign in with Google to begin your royal quest.</p>

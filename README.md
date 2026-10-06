@@ -797,15 +797,15 @@ resq_queen/
 │   └── learn.js
 │
 ├── public/
-│   ├── enemy.png
-│   ├── Enemy_home.png
-│   ├── enemy_queen_captured.png
-│   ├── happy_queen_after_meeting_king.png.png
-│   ├── King.png
-│   ├── logo.png
-│   ├── sad_queen_with_enemy.png
+│   ├── enemy.webp
+│   ├── Enemy_home.webp
+│   ├── enemy_queen_captured.webp
+│   ├── happy_queen_after_meeting_king.webp
+│   ├── King.webp
+│   ├── logo.webp
+│   ├── sad_queen_with_enemy.webp
 │   ├── Sword.mp4
-│   └── sword.png
+│   └── sword_2.webp
 │
 ├── server/
 │   ├── app.js
@@ -1108,9 +1108,7 @@ Mobile considerations include:
 
 AI development tools were used during development for:
 
-* Debugging React and backend issues
 * Writing full code if peudocode with what needs to be done is given in english.
-* Troubleshooting deployment issues.
 * Animations integration.
 
 ---

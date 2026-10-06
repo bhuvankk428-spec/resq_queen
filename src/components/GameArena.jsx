@@ -52,7 +52,7 @@ export default function GameArena({ score, won }) {
             }}
           >
             <img
-              src="/Enemy_home.png"
+              src="/Enemy_home.webp"
               alt="Enemy castle"
             />
 
@@ -78,7 +78,7 @@ export default function GameArena({ score, won }) {
 
             <img
               className="king"
-              src="/King.png"
+              src="/King.webp"
               alt="King"
             />
 
@@ -121,7 +121,7 @@ export default function GameArena({ score, won }) {
           <div className="victory-glow" />
 
           <img
-            src="/happy_queen_after_meeting_king.png.png"
+            src="/happy_queen_after_meeting_king.webp"
             alt="King and Queen reunited"
             className="victory-image"
           />
